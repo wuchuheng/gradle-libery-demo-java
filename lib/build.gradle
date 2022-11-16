@@ -9,12 +9,90 @@
 plugins {
     // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
+    // 1 添加相关插件
+    id 'maven-publish'
+    id 'signing'
 }
+
+// 2 定义要发行的版本号
+version = "0.0.2"
 
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
 }
+
+publishing {
+    // 3 发行的包的相关信息说明
+    publications {
+        mavenJava(MavenPublication) {
+            groupId ="cn.wuchuheng"
+            artifactId = "tmp"
+            from(components["java"])
+            pom {
+                name.set("tmp")
+                description.set("库的使用简要说明...")
+                url.set("https://wuchuheng.cn") // 库的官方文档
+                inceptionYear.set("2022")
+                developers {
+                    developer {
+                        // 开发者信息
+                        id.set("wuchuhengcn")
+                        name.set("wuchuhengcn")
+                        email.set("root@wuchuheng.cn")
+                    }
+                }
+                // 协议信息
+                licenses {
+                    license {
+                        name.set("MIT")
+                        url.set("https://github.com/wuchuheng/gradle-libery-demo-java")
+                        distribution.set("repo")
+                    }
+                }
+                // 源代码仓库信息
+                scm {
+                    url.set("https://github.com/wuchuheng/gradle-libery-demo-java")
+                    connection.set("scm:git:git@github.com:wuchuheng/gradle-libery-demo-java.git")
+                    developerConnection.set("scm:git:ssh:git@github.com:wuchuheng/gradle-libery-demo-java.git")
+                }
+            }
+        }
+    }
+    repositories {
+        // 4 要上传的仓库信息
+        maven {
+            name = "OSSRH"
+            credentials {
+                username = System.getenv("OSSRH_USERNAME")
+                password = System.getenv("OSSRH_PASSWORD")
+            }
+            // 根据版本名中是否以"SNAPSHOT"为结尾，则上传到"SNAPSHOT"仓库，通常作为开发测试使用，反之则正式版本使用
+            if (project.version.toString().endsWith("-SNAPSHOT")) {
+                url = "https://s01.oss.sonatype.org/content/repositories/snapshots"
+            } else {
+                url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            }
+        }
+    }
+}
+
+signing {
+    sign(publishing.publications.mavenJava)
+}
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+// 生成文档。在上传包时，有文档包含要求。
+javadoc {
+    options.addStringOption("charset", "UTF-8")
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}
+
 
 dependencies {
     // Use JUnit Jupiter for testing.

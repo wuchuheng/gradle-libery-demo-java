@@ -3,7 +3,23 @@
  */
 package cn.wuchuheng.tmp;
 
+/**
+ * Library {
+ */
 public class Library {
+    Library(){}
+    /**
+     *  Print message.
+     */
+    public void printMessage() {
+        System.out.print("Are you ok?");
+    }
+
+    /**
+     * someLibraryMethod
+     *
+     * @return boolean
+     */
     public boolean someLibraryMethod() {
         return true;
     }
