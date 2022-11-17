@@ -14,8 +14,10 @@ plugins {
     id 'signing'
 }
 
+sourceCompatibility = 17
+
 // 2 定义要发行的版本号
-version = "0.0.4"
+version = "0.0.5"
 
 repositories {
     // Use Maven Central for resolving dependencies.
